@@ -1,6 +1,6 @@
 ﻿namespace Clarity
 {
-    public class Sample : Server
+    public class Sample : Actor
     {
         public Sample()
         {
@@ -20,11 +20,11 @@
         {
             if (Authenticated.IsTrue(obj))
             {
-                Session.RespondWith(new UserAuthenticated());
+                Owner.RespondWith(new UserAuthenticated());
             }
             else
             {
-                Session.RespondWith(new UserNotAuthenticated());
+                Owner.RespondWith(new UserNotAuthenticated());
             }
         }
     }

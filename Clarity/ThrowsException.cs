@@ -2,7 +2,7 @@
 
 namespace Clarity
 {
-    public class ThrowsException : Status
+    public class ThrowsException
     {
         public void Execute(Action action)
         {

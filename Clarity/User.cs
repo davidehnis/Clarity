@@ -1,6 +1,6 @@
 ﻿namespace Clarity
 {
-    public class User : Subject
+    public class User
     {
     }
 }

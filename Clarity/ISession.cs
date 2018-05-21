@@ -16,7 +16,7 @@ namespace Clarity
 
         void Execute();
 
-        DefferedAction If<T>() where T : Status;
+        DefferedAction If<T>();
 
         void RespondWith(Response response);
 

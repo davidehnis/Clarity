@@ -40,42 +40,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Act.cs" />
+    <Compile Include="Actor.cs" />
     <Compile Include="Authenticate.cs" />
     <Compile Include="Authentication.cs" />
     <Compile Include="Client.cs" />
-    <Compile Include="Command.cs" />
-    <Compile Include="Condition.cs" />
+    <Compile Include="ConditionalRequest.cs" />
     <Compile Include="DefferedAction.cs" />
     <Compile Include="IActor.cs" />
     <Compile Include="ISession.cs" />
-    <Compile Include="Message.cs" />
-    <Compile Include="Pod.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Purpose.cs" />
-    <Compile Include="Push.cs" />
     <Compile Include="Request.cs" />
-    <Compile Include="Responded.cs" />
-    <Compile Include="Responds.cs" />
     <Compile Include="Response.cs" />
     <Compile Include="ResponseAction.cs" />
     <Compile Include="Sample.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Session.cs" />
-    <Compile Include="Start.cs" />
-    <Compile Include="Statement.cs" />
-    <Compile Include="Status.cs" />
-    <Compile Include="Subject.cs" />
-    <Compile Include="This.cs" />
     <Compile Include="ThrowsException.cs" />
-    <Compile Include="Truth.cs" />
     <Compile Include="User.cs" />
     <Compile Include="UserAuthenticated.cs" />
     <Compile Include="UserNotAuthenticated.cs" />
-    <Compile Include="Verb.cs" />
-    <Compile Include="Visitor.cs" />
-    <Compile Include="Wait.cs" />
-    <Compile Include="With.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

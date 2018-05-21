@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlTypes;
 
 namespace Clarity
 {
+    /// <summary>
+    /// A session represents a pre-configured connection from
+    /// the 'client' to the 'server'
+    /// </summary>
     public class Session : IDisposable, ISession
     {
         public Session()
@@ -52,7 +55,7 @@ namespace Clarity
             }
         }
 
-        public DefferedAction If<T>() where T : Status
+        public DefferedAction If<T>()
         {
             var act = new DefferedAction(typeof(T));
             States.Add(typeof(T), act);
@@ -63,17 +66,6 @@ namespace Clarity
         public void RespondWith(Response response)
         {
         }
-
-        //public void Reverberate<TVerb>(Server server)
-        //{
-        //    Act(Registry[server]);
-        //}
-
-        //public void StartServerSession(Server server)
-        //{
-        //    Server = server;
-        //    Server.Session = this;
-        //}
 
         public Session To<TRequest, TData>(TData data) where TRequest : Request, new()
         {
@@ -97,19 +89,15 @@ namespace Clarity
             return this;
         }
 
-        protected void Act(Verb verb)
-        {
-        }
-
         protected void ProcessException(Exception ex)
         {
             var act = Registrar[typeof(ThrowsException)];
             act.Invoke(ex);
         }
 
-        protected void Register<TStatus>(Action<object> action) where TStatus : Status
+        protected void Register<TStatus>(Action<object> action)
         {
-            Registrar.Add(typeof(Status), action);
+            Registrar.Add(typeof(TStatus), action);
         }
 
         /// <summary>
