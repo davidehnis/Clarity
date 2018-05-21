@@ -5,9 +5,9 @@ namespace Clarity
 {
     /// <summary>
     /// A session represents a pre-configured connection from
-    /// the 'client' to the 'server'
+    /// one Actor to Another
     /// </summary>
-    public class Session : IDisposable, ISession
+    public class Session : ISession
     {
         public Session()
         {
@@ -26,11 +26,7 @@ namespace Clarity
 
         public IActor Server { get; protected set; }
 
-        protected Dictionary<Type, Action<object>> Registrar { get; } = new Dictionary<Type, Action<object>>();
-
-        protected Dictionary<Type, ResponseAction> ResponseRegistery { get; } = new Dictionary<Type, ResponseAction>();
-
-        protected Dictionary<Type, DefferedAction> States { get; } = new Dictionary<Type, DefferedAction>();
+        protected Dictionary<Type, Operation> ResponseRegistery { get; } = new Dictionary<Type, Operation>();
 
         public static Session Start(IActor requester)
         {
@@ -39,6 +35,8 @@ namespace Clarity
 
         public void Dispose()
         {
+            Client?.Dispose();
+            Server?.Dispose();
         }
 
         public void Execute()
@@ -49,7 +47,7 @@ namespace Clarity
                 if (response == null) return;
 
                 var action = ResponseRegistery[response.GetType()];
-                action.Execute();
+                action.Execute(response);
             }
             catch (Exception ex)
             {
@@ -57,12 +55,12 @@ namespace Clarity
             }
         }
 
-        public DefferedAction If<T>()
+        public Operation IfServerRespondsWith<T>() where T : Response
         {
-            var act = new DefferedAction(typeof(T));
-            States.Add(typeof(T), act);
+            var action = new Operation(this);
+            ResponseRegistery.Add(typeof(T), action);
 
-            return act;
+            return action;
         }
 
         public void RespondWith(Response response)
@@ -76,14 +74,6 @@ namespace Clarity
             return this;
         }
 
-        public ResponseAction WhenServerRespondsWith<T>() where T : Response
-        {
-            var action = new ResponseAction(this);
-            ResponseRegistery.Add(typeof(T), action);
-
-            return action;
-        }
-
         public Session With<T>() where T : Actor, IDisposable, new()
         {
             Server = new T();
@@ -93,13 +83,8 @@ namespace Clarity
 
         protected void ProcessException(Exception ex)
         {
-            var act = States[typeof(ThrowsException)];
-            act?.Action(ex);
-        }
-
-        protected void Register<TStatus>(Action<object> action)
-        {
-            Registrar.Add(typeof(TStatus), action);
+            var act = ResponseRegistery[typeof(Error)];
+            act?.Execute(new Error(ex));
         }
 
         /// <summary>

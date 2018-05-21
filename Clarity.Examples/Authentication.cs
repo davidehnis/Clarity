@@ -2,15 +2,11 @@
 
 namespace Clarity.Examples
 {
-    public class Authentication : Actor, IDisposable
+    public class Authentication : Actor
     {
         public Authentication()
         {
             Register<Authenticate>(Handle);
-        }
-
-        public void Dispose()
-        {
         }
 
         private bool CheckCredentials(Credential o)
@@ -25,10 +21,10 @@ namespace Clarity.Examples
 
             if (CheckCredentials(credential))
             {
-                return new UserAuthenticated();
+                return new Authenticated();
             }
 
-            return new UserNotAuthenticated();
+            return new NotAuthenticated();
         }
     }
 }

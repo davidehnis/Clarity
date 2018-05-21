@@ -41,16 +41,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actor.cs" />
-    <Compile Include="ConditionalRequest.cs" />
-    <Compile Include="DefferedAction.cs" />
     <Compile Include="IActor.cs" />
     <Compile Include="ISession.cs" />
+    <Compile Include="Perform.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Request.cs" />
     <Compile Include="Response.cs" />
-    <Compile Include="ResponseAction.cs" />
+    <Compile Include="Operation.cs" />
     <Compile Include="Session.cs" />
-    <Compile Include="ThrowsException.cs" />
+    <Compile Include="Error.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

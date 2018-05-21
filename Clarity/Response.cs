@@ -1,24 +1,17 @@
 ﻿namespace Clarity
 {
-    public class Failed : Response
+    /// <summary>Base class for all Response types</summary>
+    public abstract class Response
     {
-    }
-
-    public class Response
-    {
-        public Response()
+        protected Response()
         {
         }
 
-        public Response(string message)
+        protected Response(string message)
         {
             Message = message;
         }
 
         public string Message { get; } = "";
-    }
-
-    public class Success : Response
-    {
     }
 }

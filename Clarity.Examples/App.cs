@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Clarity.Examples
 {
+    /// <summary></summary>
     public class App : IActor
     {
         public ISession Owner { get; set; }
@@ -17,12 +14,16 @@ namespace Clarity.Examples
             // action server intention subject
             using (var session = Session.Start(this).With<Authentication>().To<Authenticate, Credential>(credential))
             {
-                session.WhenServerRespondsWith<UserAuthenticated>().ThenExecute(OnUserAuthenticated);
-                session.WhenServerRespondsWith<UserNotAuthenticated>().ThenExecute(OnUserNotAuthenticated);
-                session.If<ThrowsException>().ExecuteThis(HandleException);
+                session.IfServerRespondsWith<Authenticated>().ThenExecute(OnUserAuthenticated);
+                session.IfServerRespondsWith<NotAuthenticated>().ThenExecute(OnUserNotAuthenticated);
+                session.IfServerRespondsWith<Error>().ThenExecute(HandleException);
 
                 session.Execute();
             }
+        }
+
+        public void Dispose()
+        {
         }
 
         public Response Request(Request request, object data)
@@ -37,14 +38,14 @@ namespace Clarity.Examples
             if (ex is Exception exception) Response = exception.Message;
         }
 
-        private void OnUserAuthenticated()
+        private void OnUserAuthenticated(Response response)
         {
             var message = "User Authenticated";
             Console.WriteLine(message);
             Response = message;
         }
 
-        private void OnUserNotAuthenticated()
+        private void OnUserNotAuthenticated(Response response)
         {
             var message = "User Not Authenticated";
             Console.WriteLine(message);

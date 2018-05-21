@@ -2,7 +2,7 @@
 
 namespace Clarity
 {
-    public interface ISession
+    public interface ISession : IDisposable
     {
         IActor Client { get; }
 
@@ -12,19 +12,15 @@ namespace Clarity
 
         IActor Server { get; }
 
-        void Dispose();
-
         void Execute();
 
-        DefferedAction If<T>();
+        Operation IfServerRespondsWith<T>() where T : Response;
 
         void RespondWith(Response response);
 
         //void Reverberate<TVerb>(Server server);
         //void StartServerSession(Server server);
         Session To<TRequest, TData>(TData data) where TRequest : Request, new();
-
-        ResponseAction WhenServerRespondsWith<T>() where T : Response;
 
         Session With<T>() where T : Actor, IDisposable, new();
     }

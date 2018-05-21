@@ -1,6 +1,7 @@
 ﻿namespace Clarity
 {
-    public class Request
+    /// <summary>Base class representing requests</summary>
+    public abstract class Request
     {
     }
 }

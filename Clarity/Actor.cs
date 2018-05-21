@@ -3,18 +3,28 @@ using System.Collections.Generic;
 
 namespace Clarity
 {
+    /// <summary>Participates in a Session</summary>
     public class Actor : IActor
     {
-        public Actor()
-        {
-        }
-
+        /// <summary>The session containing this actor</summary>
         public ISession Owner { get; set; }
 
-        protected Dictionary<Type, Func<Request, object, Response>> Registrar { get; } = new Dictionary<Type, Func<Request, object, Response>>();
+        protected Dictionary<Type, Perform> Registrar { get; } = new Dictionary<Type, Perform>();
 
         protected Dictionary<Type, Action<object>> RegistrarHandles { get; } = new Dictionary<Type, Action<object>>();
 
+        public void Dispose()
+        {
+        }
+
+        /// <summary>
+        /// Processes a request with associated data
+        /// </summary>
+        /// <param name="request">The request to be processed</param>
+        /// <param name="data">   the associated data</param>
+        /// <returns>
+        /// The actual response after processing request
+        /// </returns>
         public Response Request(Request request, object data)
         {
             if (!Registrar.ContainsKey(request.GetType())) return null;
@@ -22,19 +32,14 @@ namespace Clarity
             return InvokeRequest(action, request, data);
         }
 
-        protected virtual Response InvokeRequest(Func<Request, object, Response> action, Request request, object data)
+        protected virtual Response InvokeRequest(Perform action, Request request, object data)
         {
             return action?.Invoke(request, data);
         }
 
-        protected void Register<TRequest>(Func<Request, object, Response> action) where TRequest : Request, new()
+        protected void Register<TRequest>(Perform action) where TRequest : Request, new()
         {
             Registrar.Add(typeof(TRequest), action);
-        }
-
-        protected void Register<T>(Action<T> action) where T : Request
-        {
-            RegistrarHandles.Add(typeof(T), (Action<object>)action);
         }
     }
 }
