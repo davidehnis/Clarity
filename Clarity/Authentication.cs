@@ -2,15 +2,14 @@
 
 namespace Clarity
 {
-    public class Authentication : Service, IDisposable
+    public class Authentication : Actor, IDisposable
     {
-        public void Dispose()
+        public Authentication()
         {
         }
 
-        public Session To<TCommand>(Subject sub)
+        public void Dispose()
         {
-            return new Session();
         }
     }
 }

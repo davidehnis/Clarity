@@ -25,10 +25,6 @@ namespace Clarity
         {
         }
 
-        public T For<T>()
-        {
-        }
-
         public bool IsTrue()
         {
             if (Act == null) return false;

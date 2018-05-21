@@ -1,55 +1,62 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Clarity
 {
-    public class Client
+    public class Actor : IActor
     {
-        public static Authentication Authentication { get; }
+        public Actor()
+        {
+        }
 
-        public Session Session { get; }
+        public ISession Owner { get; set; }
+
+        protected Dictionary<Type, Func<Request, object, Response>> Registrar { get; } = new Dictionary<Type, Func<Request, object, Response>>();
+
+        public Response Request(Request request, object data)
+        {
+            if (!Registrar.ContainsKey(request.GetType())) return null;
+            var action = Registrar[request.GetType()];
+            return InvokeRequest(action, request, data);
+        }
+
+        protected virtual Response InvokeRequest(Func<Request, object, Response> action, Request request, object data)
+        {
+            return action?.Invoke(request, data);
+        }
+    }
+
+    public class Client : Actor
+    {
+        public Client()
+        {
+        }
+
+        public static Authentication Authentication { get; }
 
         public void AuthenticateUser(User user)
         {
             // action server intention subject
-            using (var session = Start<Session>().With<Authentication>().To<Authenticate, User>(user))
+            using (var session = Session.Start(this).With<Authentication>().To<Authenticate, User>(user))
             {
-                // Condition subject condition action target
-                When<Responded>(session).With<UserAuthenticated>().Execute(userAuthenticated);
-                When<Responded>(session).With<UserNotAuthenticated>().Execute(userNotAuthenticated);
+                session.WhenServerRespondsWith<UserAuthenticated>().ThenExecute(OnUserAuthenticated);
+                session.WhenServerRespondsWith<UserNotAuthenticated>().ThenExecute(OnUserNotAuthenticated);
+                session.If<ThrowsException>().ExecuteThis(handleException);
 
-                // subject condition status action target
-                session.WhenServer<Responds>().With<UserAuthenticated>().Execute(userAuthenticated);
-
-                If<ThrowsException>(session).Execute(handleException);
                 session.Execute();
             }
         }
 
-        public Condition If<T>(Session session)
-        {
-            return new Condition();
-        }
-
-        public Session Start<TService>() where TService : Noun
-        {
-            return new Session(this);
-        }
-
-        public Condition When<T>(Session session) where T : Condition
-        {
-            return new Condition();
-        }
-
-        private void handleException(Session session)
+        private void handleException(object ex)
         {
         }
 
-        private void userAuthenticated(Session session)
+        private void OnUserAuthenticated()
         {
             Console.WriteLine("User Authenticated");
         }
 
-        private void userNotAuthenticated()
+        private void OnUserNotAuthenticated()
         {
             Console.WriteLine("User Not Authenticated");
         }

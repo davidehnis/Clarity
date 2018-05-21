@@ -1,58 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Clarity
 {
-    public class Sample : Server
-    {
-        public Sample()
-        {
-            var success = new Condition();
-            var failed = new Condition();
-            Authenticated = new ConditionalRequest<Authenticate>(CheckCredentials);
-        }
-
-        protected ConditionalRequest<Authenticate> Authenticated { get; }
-
-        protected override Response CalculateResponse(Request request)
-        {
-            if (Authenticated.IsTrue(request as Authenticate))
-            {
-                return new UserAuthenticated();
-            }
-
-            return new UserNotAuthenticated();
-        }
-
-        private bool CheckCredentials(Authenticate o)
-        {
-            return o.Username == "bob" && o.Password == "bob123;";
-        }
-    }
-
-    public class Server
+    public class Server : IDisposable
     {
         public Session Session { get; set; }
 
-        protected List<Type> AcceptsMessages { get; } = new List<Type>();
+        protected Dictionary<Type, Action<object>> Registrar { get; } = new Dictionary<Type, Action<object>>();
 
-        protected Dictionary<Request, Condition> RequestConditionMap { get; } = new Dictionary<Request, Condition>();
-
-        public Response Post(Request request)
+        public void Dispose()
         {
-            if (!AcceptsMessages.Contains(request.GetType())) return Responses.Bad;
-
-            return CalculateResponse(request);
+            Session?.Dispose();
         }
 
-        protected void Accepts<TMessage>()
+        protected void Register<T>(Action<T> action) where T : Request
         {
-            AcceptsMessages.Add(typeof(TMessage));
-        }
-
-        protected virtual Response CalculateResponse(Request request)
-        {
-            return new Response();
+            Registrar.Add(typeof(T), (Action<object>)action);
         }
     }
 }

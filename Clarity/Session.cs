@@ -4,32 +4,35 @@ using System.Data.SqlTypes;
 
 namespace Clarity
 {
-    public class Session : Noun, IDisposable
+    public class Session : IDisposable, ISession
     {
         public Session()
         {
         }
 
-        public Session(Client client)
+        public Session(IActor client)
         {
             Client = client;
         }
 
-        public Client Client { get; }
-
-        public Command Command { get; protected set; }
+        public IActor Client { get; }
 
         public object Data { get; protected set; }
 
-        public Server Server { get; protected set; }
+        public Request Request { get; protected set; }
 
-        protected Type DataType { get; set; }
+        public IActor Server { get; protected set; }
 
-        protected Dictionary<Verb, Action<Verb>> Map { get; } = new Dictionary<Verb, Action<Verb>>();
+        protected Dictionary<Type, Action<object>> Registrar { get; } = new Dictionary<Type, Action<object>>();
 
-        protected Dictionary<Server, Verb> Registry { get; } = new Dictionary<Server, Verb>();
+        protected Dictionary<Type, ResponseAction> ResponseRegistery { get; } = new Dictionary<Type, ResponseAction>();
 
-        protected Dictionary<Server, Dictionary<Message, Response>> Trace { get; } = new Dictionary<Server, Dictionary<Message, Response>>();
+        protected Dictionary<Type, DefferedAction> States { get; } = new Dictionary<Type, DefferedAction>();
+
+        public static Session Start(IActor requester)
+        {
+            return new Session(requester);
+        }
 
         public void Dispose()
         {
@@ -37,54 +40,87 @@ namespace Clarity
 
         public void Execute()
         {
+            try
+            {
+                var response = Server.Request(Request, Data);
+                var action = ResponseRegistery[response.GetType()];
+                action.Execute();
+            }
+            catch (Exception ex)
+            {
+                ProcessException(ex);
+            }
         }
 
-        public Request Request()
+        public DefferedAction If<T>() where T : Status
         {
-            return new Request();
+            var act = new DefferedAction(typeof(T));
+            States.Add(typeof(T), act);
+
+            return act;
         }
 
-        public void Respond(Server server, Status status)
+        public void RespondWith(Response response)
         {
         }
 
-        public void Reverberate<TVerb>(Server server)
-        {
-            Act(Registry[server]);
-        }
+        //public void Reverberate<TVerb>(Server server)
+        //{
+        //    Act(Registry[server]);
+        //}
 
-        public void StartServerSession(Server server)
-        {
-            Server = server;
-            Server.Session = this;
-        }
+        //public void StartServerSession(Server server)
+        //{
+        //    Server = server;
+        //    Server.Session = this;
+        //}
 
-        public Session To<TCommand, TData>(TData data) where TCommand : Command, new()
+        public Session To<TRequest, TData>(TData data) where TRequest : Request, new()
         {
-            Command = new TCommand();
+            Request = new TRequest();
             Data = data;
-            DataType = typeof(TData);
             return this;
         }
 
-        public Status WhenServer<TVerb>() where TVerb : Verb
+        public ResponseAction WhenServerRespondsWith<T>() where T : Response
         {
-            return new Status();
+            var action = new ResponseAction(this);
+            ResponseRegistery.Add(typeof(T), action);
+
+            return action;
         }
 
-        public Session With<T>() where T : Server, IDisposable, new()
+        public Session With<T>() where T : Actor, IDisposable, new()
         {
             Server = new T();
-            return new Session();
+            Server.Owner = this;
+            return this;
         }
 
         protected void Act(Verb verb)
         {
         }
 
-        protected void Register(Verb verb)
+        protected void ProcessException(Exception ex)
         {
-            Registry.Add(Server, verb);
+            var act = Registrar[typeof(ThrowsException)];
+            act.Invoke(ex);
+        }
+
+        protected void Register<TStatus>(Action<object> action) where TStatus : Status
+        {
+            Registrar.Add(typeof(Status), action);
+        }
+
+        /// <summary>
+        /// if current status is ever in the X state, then
+        /// execute the action
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        private void Handle()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -46,8 +46,10 @@
     <Compile Include="Client.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="Condition.cs" />
+    <Compile Include="DefferedAction.cs" />
+    <Compile Include="IActor.cs" />
+    <Compile Include="ISession.cs" />
     <Compile Include="Message.cs" />
-    <Compile Include="Noun.cs" />
     <Compile Include="Pod.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Purpose.cs" />
@@ -56,8 +58,9 @@
     <Compile Include="Responded.cs" />
     <Compile Include="Responds.cs" />
     <Compile Include="Response.cs" />
+    <Compile Include="ResponseAction.cs" />
+    <Compile Include="Sample.cs" />
     <Compile Include="Server.cs" />
-    <Compile Include="Service.cs" />
     <Compile Include="Session.cs" />
     <Compile Include="Start.cs" />
     <Compile Include="Statement.cs" />
