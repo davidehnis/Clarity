@@ -27,6 +27,11 @@ namespace Clarity
             return action?.Invoke(request, data);
         }
 
+        protected void Register<TRequest>(Func<Request, object, Response> action) where TRequest : Request, new()
+        {
+            Registrar.Add(typeof(TRequest), action);
+        }
+
         protected void Register<T>(Action<T> action) where T : Request
         {
             RegistrarHandles.Add(typeof(T), (Action<object>)action);

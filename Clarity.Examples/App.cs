@@ -10,6 +10,8 @@ namespace Clarity.Examples
     {
         public ISession Owner { get; set; }
 
+        public string Response { get; protected set; } = "";
+
         public void AuthenticateUser(Credential credential)
         {
             // action server intention subject
@@ -32,16 +34,21 @@ namespace Clarity.Examples
         /// <param name="ex">ThrowsException</param>
         private void HandleException(object ex)
         {
+            if (ex is Exception exception) Response = exception.Message;
         }
 
         private void OnUserAuthenticated()
         {
-            Console.WriteLine("User Authenticated");
+            var message = "User Authenticated";
+            Console.WriteLine(message);
+            Response = message;
         }
 
         private void OnUserNotAuthenticated()
         {
-            Console.WriteLine("User Not Authenticated");
+            var message = "User Not Authenticated";
+            Console.WriteLine(message);
+            Response = message;
         }
     }
 }

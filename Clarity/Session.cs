@@ -46,6 +46,8 @@ namespace Clarity
             try
             {
                 var response = Server.Request(Request, Data);
+                if (response == null) return;
+
                 var action = ResponseRegistery[response.GetType()];
                 action.Execute();
             }
@@ -91,8 +93,8 @@ namespace Clarity
 
         protected void ProcessException(Exception ex)
         {
-            var act = Registrar[typeof(ThrowsException)];
-            act.Invoke(ex);
+            var act = States[typeof(ThrowsException)];
+            act?.Action(ex);
         }
 
         protected void Register<TStatus>(Action<object> action)

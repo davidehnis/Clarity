@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clarity", "Clarity\Clarity.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clarity.Examples", "Clarity.Examples\Clarity.Examples.csproj", "{B92E6093-E72F-4A3E-9E49-D29FD1EFA9BA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clarity.Examples.Tests", "Clarity.Examples.Tests\Clarity.Examples.Tests.csproj", "{1786C10A-A5A5-4007-9670-0B6DB5362EE8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{B92E6093-E72F-4A3E-9E49-D29FD1EFA9BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B92E6093-E72F-4A3E-9E49-D29FD1EFA9BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B92E6093-E72F-4A3E-9E49-D29FD1EFA9BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1786C10A-A5A5-4007-9670-0B6DB5362EE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1786C10A-A5A5-4007-9670-0B6DB5362EE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1786C10A-A5A5-4007-9670-0B6DB5362EE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1786C10A-A5A5-4007-9670-0B6DB5362EE8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

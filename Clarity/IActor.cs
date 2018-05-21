@@ -1,4 +1,6 @@
-﻿namespace Clarity
+﻿using System;
+
+namespace Clarity
 {
     public interface IActor
     {
